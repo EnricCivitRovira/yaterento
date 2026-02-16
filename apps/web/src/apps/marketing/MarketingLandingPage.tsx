@@ -2,10 +2,10 @@ export default function MarketingLandingPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-        .yr-root { font-family: 'DM Sans', sans-serif; }
-        .yr-display { font-family: 'Syne', sans-serif; }
+        .yr-root { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .yr-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; }
 
         @keyframes yr-float {
           0%, 100% { transform: translateY(0) scale(1); }
@@ -177,9 +177,9 @@ export default function MarketingLandingPage() {
             </div>
 
             {/* H1 */}
-            <h1 className="yr-display yr-fu-2" style={{ fontSize: 'clamp(40px, 6.5vw, 78px)', fontWeight: 800, lineHeight: 1.08, color: '#f8fafc', marginBottom: 22, letterSpacing: '-0.03em' }}>
+            <h1 className="yr-display yr-fu-2" style={{ fontSize: 'clamp(40px, 6.5vw, 76px)', fontWeight: 700, lineHeight: 1.1, color: '#f8fafc', marginBottom: 22, letterSpacing: '-0.01em' }}>
               Tu empresa náutica,<br />
-              <span className="yr-gradient-text">digitalizada en minutos</span>
+              <em className="yr-gradient-text" style={{ fontStyle: 'italic', fontWeight: 300 }}>digitalizada en minutos</em>
             </h1>
 
             {/* Subtext */}
