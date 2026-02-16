@@ -8,6 +8,7 @@ const BookingApp = lazy(() => import('@/apps/booking/BookingApp'))
 const ClientPortalApp = lazy(() => import('@/apps/client-portal/ClientPortalApp'))
 const BackofficeApp = lazy(() => import('@/apps/backoffice/BackofficeApp'))
 const SuperAdminApp = lazy(() => import('@/apps/superadmin/SuperAdminApp'))
+const MarketingLandingPage = lazy(() => import('@/apps/marketing/MarketingLandingPage'))
 
 function AppRoutes() {
   const { isSuperAdmin, isLoading, error, tenant } = useTenant()
@@ -28,12 +29,13 @@ function AppRoutes() {
     )
   }
 
-  // Super-admin: solo accesible desde el dominio raíz
+  // Dominio raíz: landing marketing + panel admin
   if (isSuperAdmin) {
     return (
       <Routes>
+        <Route path="/" element={<MarketingLandingPage />} />
         <Route path="/admin/*" element={<SuperAdminApp />} />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     )
   }
