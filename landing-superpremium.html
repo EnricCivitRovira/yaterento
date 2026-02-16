@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARGO — Private Yacht Charters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,700&family=Jost:wght@200;300;400;500&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --void:    #050507;
+  --ink:     #0A0A0E;
+  --charcoal:#141418;
+  --stone:   #242428;
+  --mist:    #3A3A42;
+  --smoke:   rgba(255,255,255,0.12);
+  --cream:   #F0EBE1;
+  --parchment:#E8E0D0;
+  --copper:  #B87040;
+  --bronze:  #9A6030;
+  --gold-hi: #D4A46A;
+  --serif:   'Playfair Display', Georgia, serif;
+  --sans:    'Jost', sans-serif;
+  --mono:    'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--void);
+  color: var(--cream);
+  font-family: var(--sans);
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: var(--copper);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.1s;
+}
+
+.cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(184,112,64,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all 0.18s ease;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 36px 72px;
+  mix-blend-mode: normal;
+}
+
+.nav-wordmark {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--cream);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex; gap: 48px; list-style: none;
+}
+
+.nav-links a {
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240,235,225,0.45);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--cream); }
+
+.nav-reserve {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--copper);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--copper);
+  transition: color 0.3s, border-color 0.3s;
+}
+.nav-reserve:hover { color: var(--gold-hi); border-color: var(--gold-hi); }
+
+/* HERO */
+.hero {
+  height: 100vh;
+  min-height: 800px;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Cinematic background */
+.hero-scene {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 68% 45%, rgba(40,28,18,0.95) 0%, transparent 70%),
+    radial-gradient(ellipse 100% 50% at 50% 100%, rgba(5,5,7,1) 0%, transparent 60%),
+    linear-gradient(125deg,
+      #050507 0%,
+      #0C0E15 20%,
+      #0F1A2A 40%,
+      #122238 58%,
+      #1A3550 72%,
+      #203D5C 85%,
+      #264870 100%
+    );
+}
+
+/* Star-like particles */
+.stars {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.star {
+  position: absolute;
+  width: 1px; height: 1px;
+  background: rgba(240,235,225,0.6);
+  border-radius: 50%;
+  animation: starTwinkle var(--dur, 3s) ease-in-out infinite;
+  animation-delay: var(--del, 0s);
+}
+@keyframes starTwinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.5); }
+}
+
+/* Water horizon */
+.hero-horizon {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background:
+    repeating-linear-gradient(
+      179deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(38,72,112,0.12) 18px,
+      rgba(38,72,112,0.12) 20px
+    ),
+    linear-gradient(to top, rgba(20,50,80,0.8) 0%, transparent 100%);
+  animation: horizonShift 14s ease-in-out infinite alternate;
+}
+
+@keyframes horizonShift {
+  0%   { transform: perspective(400px) rotateX(1deg) scaleX(1); }
+  100% { transform: perspective(400px) rotateX(0.5deg) scaleX(1.01); }
+}
+
+/* Yacht SVG */
+.hero-yacht {
+  position: absolute;
+  right: 5%; bottom: 20%;
+  width: 56%;
+  z-index: 2;
+  animation: yachtGlide 10s ease-in-out infinite;
+}
+
+@keyframes yachtGlide {
+  0%, 100% { transform: translateY(0) rotate(-0.2deg); }
+  40%       { transform: translateY(-10px) rotate(0.15deg); }
+  70%       { transform: translateY(-5px) rotate(-0.1deg); }
+}
+
+.hero-yacht svg { width: 100%; height: auto; }
+
+/* Light flare effect on yacht */
+.hero-yacht::before {
+  content: '';
+  position: absolute;
+  top: 20%; right: 25%;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(212,164,106,0.2) 0%, transparent 70%);
+  animation: flarePulse 4s ease-in-out infinite;
+}
+
+@keyframes flarePulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.8; transform: scale(1.3); }
+}
+
+/* Hero content — left */
+.hero-content {
+  position: relative; z-index: 5;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 72px;
+  max-width: 580px;
+  margin-top: 40px;
+}
+
+.hero-location {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: heroReveal 1s 0.3s ease forwards;
+}
+
+.location-line {
+  width: 32px; height: 1px;
+  background: var(--copper);
+}
+
+.location-text {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--copper);
+}
+
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(4.5rem, 7.5vw, 8.5rem);
+  font-weight: 400;
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: heroReveal 1.2s 0.5s ease forwards;
+}
+
+.hero-title .italic-line {
+  font-style: italic;
+  font-weight: 400;
+  display: block;
+  color: rgba(240,235,225,0.9);
+}
+
+.hero-title .outline-line {
+  display: block;
+  -webkit-text-stroke: 1px rgba(240,235,225,0.3);
+  color: transparent;
+  font-weight: 500;
+}
+
+.hero-title .copper-line {
+  display: block;
+  color: var(--copper);
+  font-style: italic;
+}
+
+.hero-desc {
+  font-size: 0.88rem;
+  line-height: 1.85;
+  color: rgba(240,235,225,0.45);
+  max-width: 380px;
+  margin-bottom: 56px;
+  opacity: 0;
+  animation: heroReveal 1s 0.8s ease forwards;
+}
+
+.hero-actions {
+  display: flex; align-items: center; gap: 40px;
+  opacity: 0;
+  animation: heroReveal 1s 1.1s ease forwards;
+}
+
+.btn-ghost-copper {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--copper);
+  text-decoration: none;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(184,112,64,0.35);
+  transition: all 0.3s;
+}
+.btn-ghost-copper:hover { color: var(--gold-hi); border-color: rgba(212,164,106,0.7); }
+
+.btn-solid-cream {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--cream);
+  padding: 16px 36px;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.btn-solid-cream:hover { background: var(--parchment); }
+
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll indicator */
+.hero-scroll {
+  position: absolute; bottom: 48px; left: 72px; z-index: 5;
+  display: flex; align-items: center; gap: 16px;
+  opacity: 0;
+  animation: heroReveal 1s 1.5s ease forwards;
+}
+
+.scroll-circle {
+  width: 44px; height: 44px;
+  border: 1px solid rgba(240,235,225,0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem;
+  color: rgba(240,235,225,0.4);
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(4px); }
+}
+
+.scroll-text {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(240,235,225,0.25);
+}
+
+/* Charter number */
+.hero-num {
+  position: absolute;
+  right: 72px; bottom: 48px; z-index: 5;
+  text-align: right;
+  opacity: 0;
+  animation: heroReveal 1s 1.4s ease forwards;
+}
+.hero-num .big { font-family: var(--serif); font-size: 4.5rem; font-weight: 300; line-height: 1; color: rgba(240,235,225,0.08); }
+.hero-num .label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(240,235,225,0.2); margin-top: 4px; }
+
+/* DIVIDER LINE */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240,235,225,0.08), rgba(184,112,64,0.2), rgba(240,235,225,0.08), transparent);
+}
+
+/* MANIFESTO */
+.manifesto {
+  padding: 140px 72px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 120px;
+  align-items: start;
+}
+
+.manifesto-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--copper);
+  padding-top: 8px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.manifesto-label::before {
+  content: '';
+  display: block; width: 20px; height: 1px;
+  background: var(--copper);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.manifesto-body {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 400;
+  line-height: 1.35;
+  color: rgba(240,235,225,0.85);
+  letter-spacing: -0.01em;
+}
+
+.manifesto-body em {
+  font-style: italic;
+  color: var(--copper);
+}
+
+/* STATS */
+.stats {
+  padding: 0 72px 120px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.stat-item {
+  padding: 48px 40px;
+  border-left: 1px solid rgba(240,235,225,0.06);
+  position: relative;
+}
+.stat-item:last-child {
+  border-right: 1px solid rgba(240,235,225,0.06);
+}
+
+.stat-num {
+  font-family: var(--serif);
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--cream);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.stat-unit {
+  color: var(--copper);
+  font-size: 2rem;
+}
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(240,235,225,0.3);
+}
+
+/* FLEET */
+.fleet {
+  background: var(--charcoal);
+  padding: 120px 72px;
+}
+
+.fleet-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 80px;
+}
+
+.section-sup {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-sup::before {
+  content: '';
+  display: block; width: 20px; height: 1px;
+  background: var(--copper);
+}
+
+.section-h {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.section-h em { font-style: italic; color: rgba(240,235,225,0.45); }
+
+.fleet-count {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: rgba(240,235,225,0.25);
+  font-style: italic;
+}
+
+/* Fleet — editorial layout */
+.fleet-editorial {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px;
+}
+
+.yacht-card {
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+}
+
+.yacht-card-a {
+  grid-row: span 2;
+}
+
+.yacht-scene {
+  width: 100%; height: 100%; min-height: 300px;
+  position: relative;
+  display: flex; align-items: flex-end;
+}
+
+.yacht-card-a .yacht-scene { min-height: 700px; }
+
+.yacht-bg-1 {
+  background:
+    radial-gradient(ellipse 80% 60% at 60% 40%, rgba(20,40,70,0.9) 0%, transparent 70%),
+    linear-gradient(155deg, #080E18 0%, #0F1E35 40%, #162B4A 70%, #1D3A62 100%);
+}
+.yacht-bg-2 {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgba(25,35,55,0.95) 0%, transparent 70%),
+    linear-gradient(155deg, #090D15 0%, #111D2E 50%, #192845 100%);
+}
+.yacht-bg-3 {
+  background:
+    radial-gradient(ellipse 80% 60% at 45% 45%, rgba(18,30,50,0.95) 0%, transparent 70%),
+    linear-gradient(155deg, #060A12 0%, #0D1728 50%, #14243A 100%);
+}
+
+/* Water lines in each card */
+.yacht-scene::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 40%;
+  background: repeating-linear-gradient(
+    179.5deg,
+    transparent 0px, transparent 14px,
+    rgba(38,72,112,0.1) 14px, rgba(38,72,112,0.1) 16px
+  );
+}
+
+.yacht-svg {
+  position: absolute;
+  bottom: 8%; left: 50%;
+  transform: translateX(-50%);
+  width: 75%;
+  opacity: 0.9;
+  animation: yachtMiniFloat 7s ease-in-out infinite;
+}
+
+.yacht-card:nth-child(2) .yacht-svg { animation-delay: -2s; }
+.yacht-card:nth-child(3) .yacht-svg { animation-delay: -4s; }
+
+@keyframes yachtMiniFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
+}
+
+.yacht-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(5,5,7,0.9) 0%, rgba(5,5,7,0.1) 50%, transparent 100%);
+  transition: background 0.5s;
+}
+.yacht-card:hover .yacht-overlay {
+  background: linear-gradient(to top, rgba(5,5,7,0.8) 0%, rgba(5,5,7,0.05) 60%, transparent 100%);
+}
+
+.yacht-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 40px;
+}
+
+.yacht-category {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 10px;
+}
+
+.yacht-name {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 14px;
+  transition: color 0.3s;
+}
+
+.yacht-card:hover .yacht-name { color: var(--gold-hi); }
+
+.yacht-card-a .yacht-name { font-size: 3rem; }
+
+.yacht-specs-row {
+  display: flex; gap: 24px; align-items: center;
+  margin-bottom: 20px;
+}
+
+.yacht-spec {
+  font-size: 0.72rem;
+  color: rgba(240,235,225,0.4);
+  letter-spacing: 0.06em;
+}
+
+.yacht-spec strong { color: rgba(240,235,225,0.75); font-weight: 400; }
+
+.yacht-price-tag {
+  display: inline-flex; align-items: baseline; gap: 6px;
+}
+
+.yacht-price-num {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--cream);
+}
+.yacht-card-a .yacht-price-num { font-size: 2.2rem; }
+
+.yacht-price-from {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  color: var(--copper);
+  text-transform: uppercase;
+}
+
+.yacht-cta {
+  position: absolute; top: 32px; right: 32px;
+  width: 48px; height: 48px;
+  border: 1px solid rgba(240,235,225,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  color: rgba(240,235,225,0.4);
+  cursor: none;
+  transition: all 0.3s;
+  transform: rotate(45deg);
+}
+.yacht-card:hover .yacht-cta {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--void);
+}
+
+/* CHARTER PROCESS */
+.process {
+  padding: 140px 72px;
+  background: var(--void);
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 120px;
+  margin-top: 80px;
+}
+
+.process-steps {
+  display: flex; flex-direction: column; gap: 0;
+}
+
+.process-step {
+  padding: 40px 0;
+  border-top: 1px solid rgba(240,235,225,0.07);
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 32px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.process-step:last-child { border-bottom: 1px solid rgba(240,235,225,0.07); }
+
+.process-step:hover { opacity: 1 !important; }
+.process-step:not(:hover) { opacity: 0.45; }
+
+.step-index {
+  font-family: var(--serif);
+  font-size: 2rem;
+  font-weight: 300;
+  color: rgba(240,235,225,0.2);
+  padding-top: 4px;
+}
+
+.step-title {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 10px;
+}
+
+.step-desc {
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: rgba(240,235,225,0.4);
+}
+
+/* Large process visual */
+.process-visual {
+  display: flex; align-items: center; justify-content: center;
+  position: sticky; top: 120px; height: fit-content;
+}
+
+.process-dial {
+  width: 360px; height: 360px;
+  border: 1px solid rgba(240,235,225,0.07);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.process-dial::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  border: 1px solid rgba(184,112,64,0.12);
+  border-radius: 50%;
+}
+
+.process-dial::after {
+  content: '';
+  position: absolute;
+  width: 240px; height: 240px;
+  border: 1px dashed rgba(240,235,225,0.05);
+  border-radius: 50%;
+  animation: dialSpin 30s linear infinite;
+}
+
+@keyframes dialSpin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.dial-center {
+  text-align: center;
+  position: relative; z-index: 1;
+}
+
+.dial-num {
+  font-family: var(--serif);
+  font-size: 5rem;
+  font-weight: 300;
+  line-height: 1;
+  color: rgba(240,235,225,0.12);
+}
+
+.dial-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--copper);
+}
+
+/* EXTRAS */
+.extras {
+  background: var(--charcoal);
+  padding: 120px 72px;
+}
+
+.extras-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  margin-top: 72px;
+  background: rgba(240,235,225,0.05);
+  border: 1px solid rgba(240,235,225,0.05);
+}
+
+.extra-item {
+  background: var(--charcoal);
+  padding: 48px 36px;
+  transition: background 0.3s;
+}
+.extra-item:hover { background: var(--stone); }
+
+.extra-icon {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.extra-name {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  color: var(--cream);
+  margin-bottom: 10px;
+}
+
+.extra-desc {
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: rgba(240,235,225,0.35);
+}
+
+/* BOOKING */
+.booking {
+  padding: 140px 72px;
+  background: var(--void);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: start;
+}
+
+.booking-intro {
+  position: sticky; top: 120px;
+}
+
+.booking-ornament {
+  width: 40px; height: 1px;
+  background: var(--copper);
+  margin-bottom: 32px;
+}
+
+.booking-title {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 4.5vw, 4.8rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+.booking-title em { font-style: italic; color: var(--copper); }
+
+.booking-note {
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: rgba(240,235,225,0.38);
+  margin-bottom: 48px;
+}
+
+.booking-guarantee {
+  display: flex; flex-direction: column; gap: 16px;
+}
+
+.guarantee-item {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 0.78rem;
+  color: rgba(240,235,225,0.45);
+  letter-spacing: 0.04em;
+}
+
+.guarantee-line {
+  width: 16px; height: 1px;
+  background: var(--copper);
+  flex-shrink: 0;
+}
+
+/* Form */
+.booking-form {
+  background: var(--charcoal);
+  padding: 60px;
+  border-top: 1px solid rgba(184,112,64,0.3);
+}
+
+.form-section-title {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin-bottom: 28px;
+}
+
+.field {
+  margin-bottom: 28px;
+}
+
+.field-label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(240,235,225,0.25);
+  margin-bottom: 10px;
+}
+
+.field-input, .field-select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(240,235,225,0.1);
+  color: var(--cream);
+  font-family: var(--serif);
+  font-size: 1rem;
+  font-weight: 400;
+  padding: 10px 0;
+  outline: none;
+  transition: border-color 0.3s;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.field-input:focus, .field-select:focus {
+  border-bottom-color: var(--copper);
+}
+.field-input::placeholder { color: rgba(240,235,225,0.2); font-style: italic; }
+.field-select option { background: var(--charcoal); }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+.form-divider {
+  height: 1px;
+  background: rgba(240,235,225,0.06);
+  margin: 36px 0;
+}
+
+.form-submit {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(240,235,225,0.2);
+  color: var(--cream);
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 20px 28px;
+  cursor: none;
+  transition: all 0.4s;
+  margin-top: 12px;
+}
+.form-submit:hover {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--void);
+}
+
+.submit-arrow {
+  font-size: 1rem;
+  transition: transform 0.3s;
+}
+.form-submit:hover .submit-arrow { transform: translateX(6px); }
+
+/* REVIEWS */
+.reviews {
+  background: var(--charcoal);
+  padding: 120px 72px;
+  overflow: hidden;
+}
+
+.reviews-track {
+  display: flex; gap: 2px;
+  margin-top: 72px;
+  overflow: hidden;
+}
+
+.review-item {
+  flex: 0 0 460px;
+  background: var(--stone);
+  padding: 52px;
+  position: relative;
+  transition: background 0.3s;
+}
+.review-item:hover { background: var(--mist); }
+
+.review-number {
+  font-family: var(--serif);
+  font-size: 5rem;
+  font-weight: 300;
+  color: rgba(240,235,225,0.04);
+  line-height: 1;
+  margin-bottom: 28px;
+}
+
+.review-text {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.75;
+  color: rgba(240,235,225,0.7);
+  margin-bottom: 36px;
+}
+
+.review-author-row {
+  display: flex; align-items: center; gap: 16px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(240,235,225,0.06);
+}
+
+.review-init {
+  width: 40px; height: 40px;
+  border: 1px solid rgba(184,112,64,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  color: var(--copper);
+}
+
+.review-name-text { font-size: 0.85rem; font-weight: 400; margin-bottom: 3px; }
+.review-origin { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.1em; color: rgba(240,235,225,0.3); }
+
+.review-stars {
+  position: absolute; top: 52px; right: 52px;
+  font-size: 0.65rem; letter-spacing: 4px; color: var(--copper);
+}
+
+/* Google integration badge */
+.google-integration {
+  display: inline-flex; align-items: center; gap: 12px;
+  border: 1px solid rgba(240,235,225,0.08);
+  padding: 12px 22px;
+  margin-top: 48px;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(240,235,225,0.35);
+  transition: border-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+.google-integration:hover { border-color: rgba(184,112,64,0.4); color: var(--copper); }
+
+.g-letter {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, #4285F4 0%, #34A853 33%, #FBBC05 66%, #EA4335 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* FOOTER */
+footer {
+  background: var(--void);
+  border-top: 1px solid rgba(240,235,225,0.06);
+  padding: 80px 72px 48px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 80px;
+  padding-bottom: 72px;
+  border-bottom: 1px solid rgba(240,235,225,0.05);
+  margin-bottom: 48px;
+}
+
+.footer-wordmark {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.footer-desc {
+  font-size: 0.8rem;
+  line-height: 1.75;
+  color: rgba(240,235,225,0.28);
+  max-width: 260px;
+  margin-bottom: 32px;
+}
+
+.footer-contact-list {
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.footer-contact-list a {
+  font-size: 0.78rem;
+  color: rgba(240,235,225,0.3);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+  display: flex; align-items: center; gap: 10px;
+}
+.footer-contact-list a:hover { color: var(--copper); }
+
+.footer-contact-list .fc-dot {
+  width: 4px; height: 4px;
+  background: var(--copper);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.footer-col-label {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(184,112,64,0.6);
+  margin-bottom: 28px;
+}
+
+.footer-nav {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+.footer-nav a {
+  font-size: 0.82rem;
+  font-weight: 300;
+  color: rgba(240,235,225,0.3);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  transition: color 0.3s;
+}
+.footer-nav a:hover { color: rgba(240,235,225,0.8); }
+
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.footer-legal {
+  font-family: var(--mono);
+  font-size: 0.56rem;
+  letter-spacing: 0.12em;
+  color: rgba(240,235,225,0.15);
+}
+
+.lang-set {
+  display: flex; gap: 24px;
+}
+
+.lang-set button {
+  font-family: var(--mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: rgba(240,235,225,0.2);
+  background: none; border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0;
+}
+.lang-set button:hover, .lang-set button.active { color: var(--copper); }
+
+/* Reveal */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-wordmark">ARGO</a>
+  <ul class="nav-links">
+    <li><a href="#fleet">Fleet</a></li>
+    <li><a href="#process">Charter</a></li>
+    <li><a href="#reviews">Testimonials</a></li>
+  </ul>
+  <a href="#booking" class="nav-reserve">Private Charter →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-scene"></div>
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Water horizon -->
+  <div class="hero-horizon"></div>
+
+  <!-- Yacht -->
+  <div class="hero-yacht">
+    <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <!-- Reflection/wake base -->
+      <ellipse cx="450" cy="395" rx="380" ry="18" fill="rgba(38,72,112,0.25)"/>
+
+      <!-- Main hull - superyacht shape -->
+      <path d="M 40 310 Q 450 270 860 310 L 820 360 Q 450 390 80 360 Z"
+            fill="rgba(240,235,225,0.07)" stroke="rgba(240,235,225,0.2)" stroke-width="1.5"/>
+
+      <!-- Hull stripe - copper -->
+      <path d="M 90 315 Q 450 278 810 315" stroke="rgba(184,112,64,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Lower deck -->
+      <rect x="120" y="258" width="640" height="55" rx="2"
+            fill="rgba(240,235,225,0.04)" stroke="rgba(240,235,225,0.12)" stroke-width="1"/>
+
+      <!-- Upper superstructure -->
+      <rect x="220" y="195" width="400" height="65" rx="3"
+            fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.15)" stroke-width="1"/>
+
+      <!-- Bridge -->
+      <rect x="290" y="145" width="250" height="52" rx="3"
+            fill="rgba(240,235,225,0.06)" stroke="rgba(240,235,225,0.18)" stroke-width="1"/>
+
+      <!-- Windows lower deck - panoramic -->
+      <rect x="145" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.15)" stroke="rgba(212,164,106,0.35)" stroke-width="1"/>
+      <rect x="210" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.15)" stroke="rgba(212,164,106,0.35)" stroke-width="1"/>
+      <rect x="275" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+      <rect x="560" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.15)" stroke="rgba(212,164,106,0.35)" stroke-width="1"/>
+      <rect x="625" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.15)" stroke="rgba(212,164,106,0.35)" stroke-width="1"/>
+      <rect x="690" y="272" width="55" height="28" rx="2"
+            fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+
+      <!-- Bridge windows -->
+      <rect x="308" y="158" width="36" height="26" rx="2"
+            fill="rgba(184,200,230,0.15)" stroke="rgba(184,200,230,0.3)" stroke-width="1"/>
+      <rect x="354" y="158" width="36" height="26" rx="2"
+            fill="rgba(184,200,230,0.15)" stroke="rgba(184,200,230,0.3)" stroke-width="1"/>
+      <rect x="440" y="158" width="36" height="26" rx="2"
+            fill="rgba(184,200,230,0.15)" stroke="rgba(184,200,230,0.3)" stroke-width="1"/>
+      <rect x="486" y="158" width="36" height="26" rx="2"
+            fill="rgba(184,200,230,0.15)" stroke="rgba(184,200,230,0.3)" stroke-width="1"/>
+
+      <!-- Mast / radar tower -->
+      <line x1="415" y1="40" x2="415" y2="148" stroke="rgba(240,235,225,0.4)" stroke-width="2"/>
+      <line x1="380" y1="75" x2="450" y2="75" stroke="rgba(240,235,225,0.25)" stroke-width="1.5"/>
+      <circle cx="415" cy="38" r="4" fill="rgba(212,164,106,0.8)"/>
+      <!-- Radar disk -->
+      <ellipse cx="415" cy="65" rx="20" ry="4" fill="none" stroke="rgba(240,235,225,0.2)" stroke-width="1"/>
+
+      <!-- Bow flag -->
+      <line x1="800" y1="258" x2="800" y2="220" stroke="rgba(240,235,225,0.3)" stroke-width="1.5"/>
+      <polygon points="800,220 828,230 800,240" fill="rgba(184,112,64,0.7)"/>
+
+      <!-- Tender/dinghy at stern -->
+      <ellipse cx="160" cy="360" rx="50" ry="12" fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.15)" stroke-width="1"/>
+
+      <!-- Sun deck accessories -->
+      <rect x="680" y="248" width="20" height="10" rx="2" fill="rgba(240,235,225,0.1)" stroke="rgba(240,235,225,0.2)" stroke-width="1"/>
+      <rect x="708" y="248" width="20" height="10" rx="2" fill="rgba(240,235,225,0.1)" stroke="rgba(240,235,225,0.2)" stroke-width="1"/>
+
+      <!-- Wake lines -->
+      <path d="M 860 330 Q 900 322 940 330" stroke="rgba(100,150,200,0.2)" stroke-width="1.5" fill="none"/>
+      <path d="M 855 345 Q 905 335 950 345" stroke="rgba(100,150,200,0.12)" stroke-width="1" fill="none"/>
+      <path d="M 850 358 Q 908 346 955 358" stroke="rgba(100,150,200,0.08)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-location">
+      <div class="location-line"></div>
+      <div class="location-text">Puerto Banús · Costa del Sol</div>
+    </div>
+    <h1 class="hero-title">
+      <span class="italic-line">The art of</span>
+      <span class="outline-line">PRIVATE</span>
+      <span class="copper-line">charter.</span>
+    </h1>
+    <p class="hero-desc">
+      Curated luxury yachting experiences on the Mediterranean. Bespoke itineraries, white-glove service, absolute discretion.
+    </p>
+    <div class="hero-actions">
+      <a href="#booking" class="btn-solid-cream">Request charter</a>
+      <a href="#fleet" class="btn-ghost-copper">Explore the fleet →</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-circle">↓</div>
+    <div class="scroll-text">Scroll to discover</div>
+  </div>
+
+  <div class="hero-num">
+    <div class="big">12</div>
+    <div class="label">yachts available</div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- MANIFESTO -->
+<section class="manifesto reveal">
+  <div class="manifesto-label">Our philosophy</div>
+  <div class="manifesto-body">
+    Not simply a charter.
+    <em>A considered escape</em>
+    from the ordinary — where the sea becomes
+    your private domain.
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats reveal">
+  <div class="stat-item">
+    <div class="stat-num">12<span class="stat-unit">+</span></div>
+    <div class="stat-label">Vessels in fleet</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">8</div>
+    <div class="stat-label">Years of excellence</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2.4<span class="stat-unit">k</span></div>
+    <div class="stat-label">Charters completed</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">4.9</div>
+    <div class="stat-label">Average rating</div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- FLEET -->
+<section class="fleet reveal" id="fleet">
+  <div class="fleet-header">
+    <div>
+      <div class="section-sup">The fleet</div>
+      <h2 class="section-h">Select your<br><em>vessel</em></h2>
+    </div>
+    <div class="fleet-count">12 vessels · All categories</div>
+  </div>
+
+  <div class="fleet-editorial">
+    <!-- Featured -->
+    <div class="yacht-card yacht-card-a">
+      <div class="yacht-scene yacht-bg-1">
+        <div class="yacht-svg">
+          <svg viewBox="0 0 600 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 200 Q 300 165 580 200 L 555 235 Q 300 255 45 235 Z"
+                  fill="rgba(240,235,225,0.08)" stroke="rgba(240,235,225,0.2)" stroke-width="1.5"/>
+            <path d="M 50 204 Q 300 170 550 204" stroke="rgba(184,112,64,0.5)" stroke-width="2" stroke-linecap="round"/>
+            <rect x="150" y="148" width="300" height="55" rx="2"
+                  fill="rgba(240,235,225,0.04)" stroke="rgba(240,235,225,0.12)" stroke-width="1"/>
+            <rect x="190" y="100" width="200" height="50" rx="2"
+                  fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.15)" stroke-width="1"/>
+            <rect x="170" y="162" width="35" height="22" rx="2"
+                  fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="215" y="162" width="35" height="22" rx="2"
+                  fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="360" y="162" width="35" height="22" rx="2"
+                  fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="405" y="162" width="35" height="22" rx="2"
+                  fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <line x1="300" y1="28" x2="300" y2="100" stroke="rgba(240,235,225,0.35)" stroke-width="2"/>
+            <circle cx="300" cy="25" r="3" fill="rgba(212,164,106,0.8)"/>
+          </svg>
+        </div>
+        <div class="yacht-overlay"></div>
+        <div class="yacht-cta">→</div>
+        <div class="yacht-info">
+          <div class="yacht-category">Motor Yacht · Premium</div>
+          <div class="yacht-name">ARGO I</div>
+          <div class="yacht-specs-row">
+            <span class="yacht-spec"><strong>24m</strong> length</span>
+            <span class="yacht-spec"><strong>12</strong> guests</span>
+            <span class="yacht-spec"><strong>2× 600hp</strong></span>
+            <span class="yacht-spec"><strong>4</strong> cabins</span>
+          </div>
+          <div class="yacht-price-tag">
+            <span class="yacht-price-from">from</span>
+            <span class="yacht-price-num">1.200€</span>
+            <span class="yacht-price-from">/day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second -->
+    <div class="yacht-card">
+      <div class="yacht-scene yacht-bg-2">
+        <div class="yacht-svg">
+          <svg viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 140 Q 250 112 480 140 L 458 165 Q 250 180 42 165 Z"
+                  fill="rgba(240,235,225,0.08)" stroke="rgba(240,235,225,0.2)" stroke-width="1.5"/>
+            <path d="M 45 143 Q 250 115 455 143" stroke="rgba(184,112,64,0.5)" stroke-width="2" stroke-linecap="round"/>
+            <rect x="150" y="90" width="200" height="52" rx="2" fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.13)" stroke-width="1"/>
+            <rect x="175" y="105" width="26" height="20" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="210" y="105" width="26" height="20" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="300" y="105" width="26" height="20" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <line x1="258" y1="28" x2="258" y2="90" stroke="rgba(240,235,225,0.3)" stroke-width="1.5"/>
+            <path d="M 260 32 Q 320 58 308 88 L 260 88 Z" fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.1)" stroke-width="1"/>
+            <circle cx="258" cy="26" r="3" fill="rgba(212,164,106,0.7)"/>
+          </svg>
+        </div>
+        <div class="yacht-overlay"></div>
+        <div class="yacht-cta">→</div>
+        <div class="yacht-info">
+          <div class="yacht-category">Sailing Yacht · Classic</div>
+          <div class="yacht-name">POSEIDON</div>
+          <div class="yacht-specs-row">
+            <span class="yacht-spec"><strong>16m</strong></span>
+            <span class="yacht-spec"><strong>8</strong> guests</span>
+          </div>
+          <div class="yacht-price-tag">
+            <span class="yacht-price-from">from</span>
+            <span class="yacht-price-num">680€</span>
+            <span class="yacht-price-from">/day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Third -->
+    <div class="yacht-card">
+      <div class="yacht-scene yacht-bg-3">
+        <div class="yacht-svg">
+          <svg viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 15 145 Q 250 118 485 145 L 462 168 Q 250 183 38 168 Z"
+                  fill="rgba(240,235,225,0.08)" stroke="rgba(240,235,225,0.2)" stroke-width="1.5"/>
+            <path d="M 40 148 Q 250 122 460 148" stroke="rgba(184,112,64,0.5)" stroke-width="2" stroke-linecap="round"/>
+            <rect x="160" y="96" width="180" height="50" rx="2" fill="rgba(240,235,225,0.05)" stroke="rgba(240,235,225,0.12)" stroke-width="1"/>
+            <rect x="180" y="110" width="24" height="18" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="213" y="110" width="24" height="18" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+            <rect x="300" y="110" width="24" height="18" rx="2" fill="rgba(212,164,106,0.2)" stroke="rgba(212,164,106,0.4)" stroke-width="1"/>
+          </svg>
+        </div>
+        <div class="yacht-overlay"></div>
+        <div class="yacht-cta">→</div>
+        <div class="yacht-info">
+          <div class="yacht-category">Day Charter · Sport</div>
+          <div class="yacht-name">LEVANTE II</div>
+          <div class="yacht-specs-row">
+            <span class="yacht-spec"><strong>11m</strong></span>
+            <span class="yacht-spec"><strong>10</strong> guests</span>
+          </div>
+          <div class="yacht-price-tag">
+            <span class="yacht-price-from">from</span>
+            <span class="yacht-price-num">380€</span>
+            <span class="yacht-price-from">/day</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process reveal" id="process">
+  <div class="section-sup">Charter process</div>
+  <h2 class="section-h">How to<br><em>charter</em></h2>
+
+  <div class="process-grid">
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-index">01</div>
+        <div>
+          <div class="step-title">Select your vessel</div>
+          <p class="step-desc">Browse our curated fleet and choose the yacht that best suits your party size, itinerary preferences and desired experience.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-index">02</div>
+        <div>
+          <div class="step-title">Enquire & confirm</div>
+          <p class="step-desc">Submit your charter request. Our team will confirm availability and prepare a personalised proposal within two hours.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-index">03</div>
+        <div>
+          <div class="step-title">Prepare the voyage</div>
+          <p class="step-desc">We handle every detail — provisions, route planning, crew briefing. You receive a full itinerary 48h before departure.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div class="step-index">04</div>
+        <div>
+          <div class="step-title">Set sail</div>
+          <p class="step-desc">Board your private yacht and let the Mediterranean unfold before you. Nothing left to arrange. Nothing left to chance.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="process-visual">
+      <div class="process-dial">
+        <div class="dial-center">
+          <div class="dial-num">IV</div>
+          <div class="dial-label">Steps to sea</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXTRAS -->
+<section class="extras reveal">
+  <div class="section-sup">On board</div>
+  <h2 class="section-h">Complete<br><em>experiences</em></h2>
+
+  <div class="extras-grid">
+    <div class="extra-item">
+      <div class="extra-icon">🧭</div>
+      <div class="extra-name">Private Captain</div>
+      <p class="extra-desc">Certified professional skipper. Full navigation responsibility, local knowledge, safety guarantee.</p>
+    </div>
+    <div class="extra-item">
+      <div class="extra-icon">🍽</div>
+      <div class="extra-name">Catering & Provisions</div>
+      <p class="extra-desc">Curated menus, fine wines, champagne service. All dietary requirements catered for.</p>
+    </div>
+    <div class="extra-item">
+      <div class="extra-icon">🤿</div>
+      <div class="extra-name">Water Sports</div>
+      <p class="extra-desc">Snorkeling equipment, paddleboards, kayaks. The sea as your private playground.</p>
+    </div>
+    <div class="extra-item">
+      <div class="extra-icon">🎵</div>
+      <div class="extra-name">Entertainment</div>
+      <p class="extra-desc">Premium sound system, underwater lights, sunset cocktail packages on request.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING -->
+<section class="booking reveal" id="booking">
+  <div class="booking-intro">
+    <div class="booking-ornament"></div>
+    <h2 class="booking-title">Reserve your<br><em>charter.</em></h2>
+    <p class="booking-note">
+      All enquiries are handled personally by our charter team. We respond within two business hours. No booking fees, no hidden charges.
+    </p>
+    <div class="booking-guarantee">
+      <div class="guarantee-item">
+        <div class="guarantee-line"></div>
+        Complimentary cancellation 72h prior
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-line"></div>
+        Fully inclusive pricing
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-line"></div>
+        Private & confidential handling
+      </div>
+      <div class="guarantee-item">
+        <div class="guarantee-line"></div>
+        Multi-currency accepted
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-form">
+    <div class="form-section-title">Charter enquiry</div>
+
+    <div class="field">
+      <label class="field-label">Select vessel</label>
+      <select class="field-select">
+        <option>ARGO I — Motor Yacht 24m — from 1.200€/day</option>
+        <option>POSEIDON — Sailing Yacht 16m — from 680€/day</option>
+        <option>LEVANTE II — Sport 11m — from 380€/day</option>
+      </select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Date of departure</label>
+        <input type="date" class="field-input" value="2026-08-10">
+      </div>
+      <div class="field">
+        <label class="field-label">Duration</label>
+        <select class="field-select">
+          <option>Full day (8h)</option>
+          <option>Half day (4h)</option>
+          <option>2 days</option>
+          <option>Week charter</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Number of guests</label>
+        <input type="number" class="field-input" placeholder="e.g. 6" min="1" max="12">
+      </div>
+      <div class="field">
+        <label class="field-label">Skipper required</label>
+        <select class="field-select">
+          <option>Yes — include skipper</option>
+          <option>No — bareboat charter</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="field-label">Full name</label>
+        <input type="text" class="field-input" placeholder="Your name">
+      </div>
+      <div class="field">
+        <label class="field-label">Contact</label>
+        <input type="tel" class="field-input" placeholder="+34 or international">
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Special requests</label>
+      <input type="text" class="field-input" placeholder="Catering, itinerary, occasions...">
+    </div>
+
+    <button class="form-submit">
+      Submit charter enquiry
+      <span class="submit-arrow">→</span>
+    </button>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews reveal" id="reviews">
+  <div class="section-sup">Client testimonials</div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <h2 class="section-h">Words of<br><em>our guests</em></h2>
+    <div class="google-integration">
+      <span class="g-letter">G</span>
+      4.9 · 312 reviews · Google
+    </div>
+  </div>
+
+  <div class="reviews-track">
+    <div class="review-item">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-number">"</div>
+      <p class="review-text">An exceptional experience from beginning to end. The crew's attention to detail was extraordinary — from the carefully planned route to the exquisite provisions on board. Truly unforgettable.</p>
+      <div class="review-author-row">
+        <div class="review-init">H</div>
+        <div>
+          <div class="review-name-text">Henry Ashworth</div>
+          <div class="review-origin">London · September 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-item">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-number">"</div>
+      <p class="review-text">Célébrer notre anniversaire à bord de l'ARGO I a été la meilleure décision. Service impeccable, paysages à couper le souffle. On recommande vivement à toute notre famille.</p>
+      <div class="review-author-row">
+        <div class="review-init">C</div>
+        <div>
+          <div class="review-name-text">Claire Moreau</div>
+          <div class="review-origin">Paris · Août 2025</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="review-item">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-number">"</div>
+      <p class="review-text">Превосходный уровень сервиса. Яхта в безупречном состоянии, экипаж профессиональный и ненавязчивый. Именно так и должен выглядеть настоящий частный чартер.</p>
+      <div class="review-author-row">
+        <div class="review-init">В</div>
+        <div>
+          <div class="review-name-text">Виктор Соколов</div>
+          <div class="review-origin">Москва · Июль 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-wordmark">ARGO</div>
+      <p class="footer-desc">Private yacht charter in the Mediterranean. Puerto Banús, Costa del Sol. By appointment.</p>
+      <div class="footer-contact-list">
+        <a href="#"><span class="fc-dot"></span> Puerto Banús, Marbella</a>
+        <a href="#"><span class="fc-dot"></span> +34 952 000 000</a>
+        <a href="#"><span class="fc-dot"></span> charter@argo.es</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-label">Fleet</div>
+      <ul class="footer-nav">
+        <li><a href="#">ARGO I — Motor 24m</a></li>
+        <li><a href="#">POSEIDON — Sail 16m</a></li>
+        <li><a href="#">LEVANTE II — Sport</a></li>
+        <li><a href="#">Full fleet</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-label">Charter</div>
+      <ul class="footer-nav">
+        <li><a href="#">Day charter</a></li>
+        <li><a href="#">Week charter</a></li>
+        <li><a href="#">Corporate events</a></li>
+        <li><a href="#">Rates</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-label">Legal</div>
+      <ul class="footer-nav">
+        <li><a href="#">Charter policy</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Terms</a></li>
+        <li><a href="#">Client area</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2026 ARGO Private Charters · Powered by YaTeRento.com</div>
+    <div class="lang-set">
+      <button class="active">EN</button>
+      <button>ES</button>
+      <button>FR</button>
+      <button>RU</button>
+      <button>DE</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Stars
+  const starsContainer = document.getElementById('stars');
+  for(let i = 0; i < 80; i++){
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 60 + '%';
+    star.style.setProperty('--dur', (2 + Math.random() * 4) + 's');
+    star.style.setProperty('--del', (-Math.random() * 4) + 's');
+    const size = Math.random() * 2 + 0.5;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    starsContainer.appendChild(star);
+  }
+
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX; mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  const animRing = () => {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animRing);
+  };
+  animRing();
+
+  // Hover effect on interactables
+  document.querySelectorAll('a, button, .yacht-card, .process-step, .extra-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.width = '56px'; ring.style.height = '56px';
+      ring.style.borderColor = 'rgba(184,112,64,0.7)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.width = '36px'; ring.style.height = '36px';
+      ring.style.borderColor = 'rgba(184,112,64,0.5)';
+    });
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if(e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 100);
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => obs.observe(el));
+
+  // Lang switcher
+  document.querySelectorAll('.lang-set button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-set button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Process steps hover
+  const steps = document.querySelectorAll('.process-step');
+  steps.forEach(step => {
+    step.addEventListener('mouseenter', () => {
+      const idx = Array.from(steps).indexOf(step) + 1;
+      document.querySelector('.dial-num').textContent = ['I','II','III','IV'][idx-1];
+    });
+  });
+</script>
+</body>
+</html>

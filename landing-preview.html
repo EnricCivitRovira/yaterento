@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marina Blava — Alquiler de Embarcaciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #08111F;
+    --deep:    #0D1C2E;
+    --mid:     #122340;
+    --horizon: #1A3557;
+    --ocean:   #1E4976;
+    --water:   #2A6BA8;
+    --foam:    #A8C8E8;
+    --sand:    #E8D9BF;
+    --gold:    #C9A558;
+    --gold-lt: #E8C878;
+    --white:   #F5F0E8;
+    --muted:   rgba(245,240,232,0.55);
+    --serif:   'Cormorant Garamond', Georgia, serif;
+    --sans:    'DM Sans', sans-serif;
+    --mono:    'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: var(--sans);
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 60px;
+    background: linear-gradient(to bottom, rgba(8,17,31,0.95), transparent);
+    transition: background 0.4s;
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--white);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .nav-logo .anchor {
+    font-size: 1.2rem;
+    color: var(--gold);
+  }
+
+  .nav-links {
+    display: flex; gap: 40px; list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-cta {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--gold);
+    padding: 11px 26px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold-lt); }
+
+  /* ─── HERO ────────────────────────────────── */
+  .hero {
+    position: relative;
+    height: 100vh; min-height: 700px;
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(160deg, rgba(8,17,31,0.3) 0%, rgba(8,17,31,0.85) 100%),
+      radial-gradient(ellipse 120% 80% at 60% 40%, rgba(30,73,118,0.6) 0%, transparent 70%);
+    z-index: 1;
+  }
+
+  /* Simulated water texture */
+  .hero-water {
+    position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(
+        178deg,
+        transparent 0px,
+        transparent 38px,
+        rgba(42,107,168,0.08) 38px,
+        rgba(42,107,168,0.08) 40px
+      ),
+      repeating-linear-gradient(
+        92deg,
+        transparent 0px,
+        transparent 120px,
+        rgba(168,200,232,0.04) 120px,
+        rgba(168,200,232,0.04) 122px
+      ),
+      linear-gradient(180deg, var(--navy) 0%, var(--deep) 30%, var(--ocean) 65%, var(--water) 100%);
+    animation: waterShift 12s ease-in-out infinite alternate;
+  }
+
+  @keyframes waterShift {
+    0%   { transform: scaleX(1) scaleY(1); }
+    50%  { transform: scaleX(1.02) scaleY(1.01); }
+    100% { transform: scaleX(0.99) scaleY(1.02); }
+  }
+
+  /* Boat silhouette */
+  .hero-boat {
+    position: absolute;
+    right: 8%; bottom: 18%;
+    width: 52%;
+    z-index: 2;
+    animation: boatFloat 6s ease-in-out infinite;
+  }
+
+  @keyframes boatFloat {
+    0%, 100% { transform: translateY(0) rotate(-0.3deg); }
+    50%       { transform: translateY(-12px) rotate(0.3deg); }
+  }
+
+  .hero-boat svg {
+    width: 100%; height: auto;
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.6));
+  }
+
+  .hero-content {
+    position: relative; z-index: 3;
+    padding: 0 60px 80px;
+    max-width: 700px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s ease forwards;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block; width: 40px; height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    font-weight: 300;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.4s ease forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold-lt);
+    display: block;
+  }
+
+  .hero-sub {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 420px;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s ease forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s ease forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--gold);
+    color: var(--navy);
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 16px 34px;
+    text-decoration: none;
+    transition: all 0.25s;
+    position: relative; overflow: hidden;
+  }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 10px;
+    color: var(--white);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(245,240,232,0.25);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute; bottom: 30px; right: 60px; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0;
+    animation: fadeUp 1s 1.2s ease forwards;
+  }
+
+  .scroll-hint span {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+  }
+
+  .scroll-line {
+    width: 1px; height: 50px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50%       { opacity: 1;   transform: scaleY(1.2); }
+  }
+
+  /* Wave divider */
+  .wave-divider {
+    position: relative; height: 80px; overflow: hidden;
+    margin-top: -1px;
+  }
+
+  /* ─── STATS BAR ───────────────────────────── */
+  .stats-bar {
+    background: var(--deep);
+    border-top: 1px solid rgba(201,165,88,0.2);
+    border-bottom: 1px solid rgba(201,165,88,0.1);
+    padding: 0 60px;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .stat-item {
+    flex: 1;
+    padding: 36px 0;
+    display: flex; flex-direction: column; gap: 4px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding-left: 44px;
+    position: relative;
+  }
+  .stat-item:first-child { padding-left: 0; }
+  .stat-item:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ─── FLEET ───────────────────────────────── */
+  .section {
+    padding: 120px 60px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .section-label::before {
+    content: '';
+    display: block; width: 28px; height: 1px;
+    background: var(--gold);
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2.8rem, 5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--gold-lt);
+  }
+
+  .section-sub {
+    font-size: 0.95rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 64px;
+  }
+
+  /* Fleet grid */
+  .fleet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .boat-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    group: true;
+  }
+
+  .boat-card:first-child {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+
+  .boat-card-inner {
+    aspect-ratio: 4/3;
+    background: var(--mid);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boat-card:first-child .boat-card-inner {
+    aspect-ratio: 16/9;
+  }
+
+  /* Boat mock images using CSS gradients */
+  .boat-img {
+    position: absolute; inset: 0;
+    transition: transform 0.6s ease;
+  }
+
+  .boat-card:hover .boat-img { transform: scale(1.05); }
+
+  .boat-img-1 {
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 60%, rgba(30,73,118,0.8) 0%, transparent 70%),
+      linear-gradient(160deg, #0D2A4A 0%, #1A4A7A 40%, #2A7AAA 100%);
+  }
+
+  .boat-img-2 {
+    background:
+      radial-gradient(ellipse 80% 60% at 40% 50%, rgba(26,53,87,0.9) 0%, transparent 70%),
+      linear-gradient(140deg, #0A1F35 0%, #12385A 50%, #1D5480 100%);
+  }
+
+  .boat-img-3 {
+    background:
+      radial-gradient(ellipse 80% 60% at 55% 55%, rgba(22,62,105,0.85) 0%, transparent 70%),
+      linear-gradient(150deg, #0C2238 0%, #183F68 50%, #23618E 100%);
+  }
+
+  /* Boat silhouette in card */
+  .boat-silhouette {
+    position: absolute;
+    bottom: 10%; left: 50%;
+    transform: translateX(-50%);
+    width: 65%;
+    opacity: 0.85;
+  }
+
+  .boat-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,17,31,0.9) 0%, transparent 55%);
+  }
+
+  .boat-card-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 28px 32px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+  }
+
+  .boat-name {
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+
+  .boat-specs {
+    display: flex; gap: 16px;
+  }
+
+  .boat-spec {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .boat-price {
+    text-align: right;
+  }
+
+  .boat-price-from {
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .boat-price-num {
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .boat-price-unit {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .boat-card-tag {
+    position: absolute;
+    top: 20px; right: 20px;
+    background: var(--gold);
+    color: var(--navy);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+  }
+
+  /* ─── EXPERIENCE SECTION ─────────────────── */
+  .experience {
+    background: var(--deep);
+    padding: 120px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .experience-visual {
+    position: relative;
+    aspect-ratio: 3/4;
+    background:
+      radial-gradient(ellipse 90% 70% at 50% 60%, rgba(30,73,118,0.7) 0%, transparent 70%),
+      linear-gradient(170deg, #0D2A4A 0%, #1A4A7A 50%, #2A7AAA 100%);
+    overflow: hidden;
+  }
+
+  .experience-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      175deg,
+      transparent 0px,
+      transparent 28px,
+      rgba(42,107,168,0.1) 28px,
+      rgba(42,107,168,0.1) 30px
+    );
+  }
+
+  .experience-visual-frame {
+    position: absolute;
+    top: -12px; left: -12px; right: 24px; bottom: 24px;
+    border: 1px solid rgba(201,165,88,0.35);
+    pointer-events: none;
+  }
+
+  .experience-badge {
+    position: absolute;
+    bottom: 40px; right: -30px;
+    width: 120px; height: 120px;
+    background: var(--gold);
+    color: var(--navy);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+    animation: badgeSpin 20s linear infinite;
+  }
+
+  @keyframes badgeSpin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .badge-num {
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .badge-txt {
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .experience-features {
+    display: flex; flex-direction: column; gap: 32px;
+    margin-top: 48px;
+  }
+
+  .feature-item {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding-bottom: 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .feature-item:last-child { border-bottom: none; }
+
+  .feature-icon {
+    width: 44px; height: 44px;
+    border: 1px solid rgba(201,165,88,0.4);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--gold);
+    font-size: 1.1rem;
+  }
+
+  .feature-title {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+  }
+
+  .feature-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── BOOKING CTA ────────────────────────── */
+  .booking-section {
+    padding: 100px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+    background: var(--navy);
+  }
+
+  .booking-left {
+    padding: 80px 60px 80px 0;
+  }
+
+  .booking-form-panel {
+    background: var(--mid);
+    padding: 60px;
+    border-left: 1px solid rgba(201,165,88,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .booking-form-panel::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-lt), var(--gold));
+  }
+
+  .form-row {
+    margin-bottom: 24px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .form-input, .form-select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--white);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus {
+    border-color: var(--gold);
+  }
+
+  .form-select option { background: var(--mid); }
+
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-submit {
+    width: 100%;
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 18px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+  .form-submit:hover { background: var(--gold-lt); }
+
+  /* ─── TESTIMONIALS ───────────────────────── */
+  .testimonials {
+    background: var(--deep);
+    padding: 120px 60px;
+    overflow: hidden;
+  }
+
+  .testimonials-track {
+    display: flex; gap: 28px;
+    margin-top: 64px;
+  }
+
+  .testimonial-card {
+    flex: 0 0 380px;
+    background: var(--mid);
+    padding: 44px;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+  .testimonial-card:hover { border-bottom-color: var(--gold); }
+
+  .t-quote {
+    font-family: var(--serif);
+    font-size: 3.5rem;
+    line-height: 0.6;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0.6;
+  }
+
+  .t-text {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    font-style: italic;
+    line-height: 1.65;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .t-author {
+    display: flex; align-items: center; gap: 14px;
+  }
+
+  .t-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--ocean);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    color: var(--foam);
+  }
+
+  .t-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .t-origin {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .t-stars {
+    position: absolute; top: 44px; right: 44px;
+    color: var(--gold); font-size: 0.75rem; letter-spacing: 2px;
+  }
+
+  /* ─── FOOTER ──────────────────────────────── */
+  footer {
+    background: #050D18;
+    padding: 80px 60px 40px;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 40px;
+  }
+
+  .footer-brand {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .footer-tagline {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 280px;
+    margin-bottom: 28px;
+  }
+
+  .footer-contact {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  .footer-contact a {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .footer-contact a:hover { color: var(--gold); }
+
+  .footer-col-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+
+  .footer-links a {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--white); }
+
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .footer-copy {
+    font-size: 0.75rem;
+    color: rgba(245,240,232,0.3);
+  }
+
+  .lang-selector {
+    display: flex; gap: 12px;
+  }
+
+  .lang-btn {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,240,232,0.4);
+    background: none; border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .lang-btn:hover, .lang-btn.active {
+    color: var(--gold);
+    border-color: rgba(201,165,88,0.3);
+  }
+
+  /* ─── ANIMATIONS & HOVER ──────────────────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Horizontal rule decorative */
+  .ornament {
+    display: flex; align-items: center; gap: 16px;
+    margin: 24px 0;
+  }
+  .ornament-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .ornament-diamond {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="anchor">⚓</span>
+    Marina Blava
+  </a>
+  <ul class="nav-links">
+    <li><a href="#flota">Flota</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#reservar">Tarifas</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#">ES · EN · RU</a></li>
+  </ul>
+  <a href="#reservar" class="nav-cta">Reservar ahora</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-water"></div>
+  <div class="hero-bg"></div>
+
+  <!-- Boat SVG silhouette -->
+  <div class="hero-boat">
+    <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <!-- Hull -->
+      <path d="M 50 240 Q 400 200 750 240 L 720 285 Q 400 310 80 285 Z" fill="rgba(168,200,232,0.12)" stroke="rgba(168,200,232,0.3)" stroke-width="1"/>
+      <!-- Deck -->
+      <path d="M 120 240 L 680 240 L 650 220 L 150 220 Z" fill="rgba(168,200,232,0.08)" stroke="rgba(168,200,232,0.2)" stroke-width="1"/>
+      <!-- Cabin -->
+      <rect x="280" y="170" width="240" height="70" rx="4" fill="rgba(168,200,232,0.15)" stroke="rgba(168,200,232,0.35)" stroke-width="1"/>
+      <!-- Windows -->
+      <rect x="300" y="185" width="35" height="25" rx="2" fill="rgba(201,165,88,0.3)" stroke="rgba(201,165,88,0.5)" stroke-width="1"/>
+      <rect x="345" y="185" width="35" height="25" rx="2" fill="rgba(201,165,88,0.3)" stroke="rgba(201,165,88,0.5)" stroke-width="1"/>
+      <rect x="420" y="185" width="35" height="25" rx="2" fill="rgba(201,165,88,0.3)" stroke="rgba(201,165,88,0.5)" stroke-width="1"/>
+      <rect x="465" y="185" width="35" height="25" rx="2" fill="rgba(201,165,88,0.3)" stroke="rgba(201,165,88,0.5)" stroke-width="1"/>
+      <!-- Mast -->
+      <line x1="410" y1="60" x2="410" y2="220" stroke="rgba(168,200,232,0.5)" stroke-width="2"/>
+      <!-- Sail hint -->
+      <path d="M 412 80 Q 500 140 480 215 L 412 215 Z" fill="rgba(245,240,232,0.06)" stroke="rgba(245,240,232,0.12)" stroke-width="1"/>
+      <!-- Bow flag -->
+      <line x1="640" y1="210" x2="640" y2="175" stroke="rgba(168,200,232,0.5)" stroke-width="1.5"/>
+      <polygon points="640,175 660,182 640,189" fill="rgba(201,165,88,0.7)"/>
+      <!-- Wake lines -->
+      <path d="M 750 260 Q 790 265 830 258" stroke="rgba(168,200,232,0.25)" stroke-width="1.5" fill="none"/>
+      <path d="M 740 275 Q 790 282 840 272" stroke="rgba(168,200,232,0.15)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Puerto de Blanes · Costa Brava</div>
+    <h1 class="hero-title">
+      Navega<br>
+      <em>sin límites</em>
+    </h1>
+    <p class="hero-sub">
+      Flota premium en la Costa Brava. Embarcaciones de lujo para días únicos en el Mediterráneo, con o sin patrón.
+    </p>
+    <div class="hero-actions">
+      <a href="#reservar" class="btn-primary">
+        Ver embarcaciones
+        <span>→</span>
+      </a>
+      <a href="#servicios" class="btn-ghost">Conocer más</a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-num">12</div>
+    <div class="stat-label">Embarcaciones</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">8+</div>
+    <div class="stat-label">Años de experiencia</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">2.400</div>
+    <div class="stat-label">Salidas completadas</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">4.9★</div>
+    <div class="stat-label">Valoración media</div>
+  </div>
+</div>
+
+<!-- FLEET SECTION -->
+<section class="section" id="flota">
+  <div class="section-label">Nuestra flota</div>
+  <h2 class="section-title reveal">Elige tu<br><em>embarcación ideal</em></h2>
+  <p class="section-sub reveal">Desde lanchas deportivas hasta veleros de crucero. Cada barco meticulosamente mantenido para tu máximo disfrute.</p>
+
+  <div class="fleet-grid reveal">
+    <!-- Card 1 - Featured -->
+    <div class="boat-card">
+      <div class="boat-card-inner">
+        <div class="boat-img boat-img-1"></div>
+        <svg class="boat-silhouette" viewBox="0 0 600 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 30 140 Q 300 110 570 140 L 545 165 Q 300 185 55 165 Z" fill="rgba(168,200,232,0.18)" stroke="rgba(168,200,232,0.3)" stroke-width="1.5"/>
+          <rect x="200" y="90" width="200" height="52" rx="3" fill="rgba(168,200,232,0.12)" stroke="rgba(168,200,232,0.25)" stroke-width="1"/>
+          <line x1="305" y1="30" x2="305" y2="140" stroke="rgba(168,200,232,0.4)" stroke-width="2"/>
+          <path d="M 307 40 Q 380 85 360 138 L 307 138 Z" fill="rgba(245,240,232,0.07)" stroke="rgba(245,240,232,0.1)" stroke-width="1"/>
+        </svg>
+        <div class="boat-card-overlay"></div>
+        <div class="boat-card-tag">Más popular</div>
+        <div class="boat-card-info">
+          <div>
+            <div class="boat-name">Poseidon III</div>
+            <div class="boat-specs">
+              <span class="boat-spec">⚡ 320 CV</span>
+              <span class="boat-spec">👥 10 pax</span>
+              <span class="boat-spec">📏 11m</span>
+            </div>
+          </div>
+          <div class="boat-price">
+            <div class="boat-price-from">desde</div>
+            <div class="boat-price-num">380€</div>
+            <div class="boat-price-unit">/día</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="boat-card">
+      <div class="boat-card-inner">
+        <div class="boat-img boat-img-2"></div>
+        <svg class="boat-silhouette" viewBox="0 0 400 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 20 110 Q 200 85 380 110 L 360 130 Q 200 148 40 130 Z" fill="rgba(168,200,232,0.18)" stroke="rgba(168,200,232,0.3)" stroke-width="1.5"/>
+          <rect x="130" y="68" width="140" height="44" rx="3" fill="rgba(168,200,232,0.12)" stroke="rgba(168,200,232,0.25)" stroke-width="1"/>
+        </svg>
+        <div class="boat-card-overlay"></div>
+        <div class="boat-card-info">
+          <div>
+            <div class="boat-name">Tramontana</div>
+            <div class="boat-specs">
+              <span class="boat-spec">⚡ 200 CV</span>
+              <span class="boat-spec">👥 8 pax</span>
+            </div>
+          </div>
+          <div class="boat-price">
+            <div class="boat-price-from">desde</div>
+            <div class="boat-price-num">240€</div>
+            <div class="boat-price-unit">/día</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="boat-card">
+      <div class="boat-card-inner">
+        <div class="boat-img boat-img-3"></div>
+        <div class="boat-card-overlay"></div>
+        <div class="boat-card-info">
+          <div>
+            <div class="boat-name">Levante</div>
+            <div class="boat-specs">
+              <span class="boat-spec">⚡ 150 CV</span>
+              <span class="boat-spec">👥 6 pax</span>
+            </div>
+          </div>
+          <div class="boat-price">
+            <div class="boat-price-from">desde</div>
+            <div class="boat-price-num">180€</div>
+            <div class="boat-price-unit">/día</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE SECTION -->
+<section class="experience" id="servicios">
+  <div class="experience-visual">
+    <div class="experience-visual-frame"></div>
+    <svg style="position:absolute;bottom:5%;left:50%;transform:translateX(-50%);width:80%;opacity:0.7" viewBox="0 0 500 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 20 170 Q 250 130 480 170 L 460 200 Q 250 225 40 200 Z" fill="rgba(168,200,232,0.2)" stroke="rgba(168,200,232,0.4)" stroke-width="1.5"/>
+      <rect x="160" y="100" width="180" height="72" rx="4" fill="rgba(168,200,232,0.12)" stroke="rgba(168,200,232,0.3)" stroke-width="1"/>
+      <rect x="180" y="115" width="30" height="22" rx="2" fill="rgba(201,165,88,0.35)" stroke="rgba(201,165,88,0.6)" stroke-width="1"/>
+      <rect x="220" y="115" width="30" height="22" rx="2" fill="rgba(201,165,88,0.35)" stroke="rgba(201,165,88,0.6)" stroke-width="1"/>
+      <rect x="295" y="115" width="30" height="22" rx="2" fill="rgba(201,165,88,0.35)" stroke="rgba(201,165,88,0.6)" stroke-width="1"/>
+      <line x1="260" y1="30" x2="260" y2="172" stroke="rgba(168,200,232,0.5)" stroke-width="2"/>
+      <path d="M 262 45 Q 360 100 340 168 L 262 168 Z" fill="rgba(245,240,232,0.06)" stroke="rgba(245,240,232,0.12)" stroke-width="1"/>
+    </svg>
+    <div class="experience-badge">
+      <span class="badge-num">12</span>
+      <span class="badge-txt">años en el mar</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-label">La experiencia</div>
+    <h2 class="section-title">Por qué elegirnos<br><em>a nosotros</em></h2>
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+    </div>
+
+    <div class="experience-features">
+      <div class="feature-item">
+        <div class="feature-icon">⚓</div>
+        <div>
+          <div class="feature-title">Reserva online 24/7</div>
+          <p class="feature-desc">Consulta disponibilidad y reserva en minutos. Confirmación inmediata por email con todos los detalles de tu salida.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🧭</div>
+        <div>
+          <div class="feature-title">Patrón titulado incluido</div>
+          <p class="feature-desc">No necesitas licencia. Nuestros patrones titulados te llevarán a las mejores calas del Mediterráneo con total seguridad.</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⭐</div>
+        <div>
+          <div class="feature-title">Flota premium certificada</div>
+          <p class="feature-desc">Revisión técnica anual, seguro a todo riesgo y equipamiento de seguridad homologado en cada embarcación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING FORM -->
+<section class="booking-section" id="reservar">
+  <div class="booking-left">
+    <div class="section-label">Reservas</div>
+    <h2 class="section-title">Empieza a<br><em>planificar</em><br>tu día</h2>
+    <p style="font-size:0.9rem;color:var(--muted);line-height:1.7;margin-top:28px;max-width:360px;">
+      Rellena el formulario y te confirmaremos la disponibilidad en menos de 2 horas. Sin tarjeta de crédito hasta la confirmación.
+    </p>
+    <div style="margin-top:44px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;gap:12px;font-size:0.82rem;color:var(--muted);">
+        <span style="color:var(--gold)">✓</span> Cancelación gratuita 48h antes
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:0.82rem;color:var(--muted);">
+        <span style="color:var(--gold)">✓</span> Precio final sin sorpresas
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:0.82rem;color:var(--muted);">
+        <span style="color:var(--gold)">✓</span> Confirmación inmediata por email
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-form-panel">
+    <div style="font-family:var(--serif);font-size:1.6rem;margin-bottom:36px;">Comprueba disponibilidad</div>
+
+    <div class="form-row">
+      <label class="form-label">Embarcación</label>
+      <select class="form-select">
+        <option>Poseidon III — 10 pax · 380€/día</option>
+        <option>Tramontana — 8 pax · 240€/día</option>
+        <option>Levante — 6 pax · 180€/día</option>
+      </select>
+    </div>
+
+    <div class="form-row form-row-2">
+      <div>
+        <label class="form-label">Fecha de salida</label>
+        <input type="date" class="form-input" value="2026-07-15">
+      </div>
+      <div>
+        <label class="form-label">Duración</label>
+        <select class="form-select">
+          <option>Día completo (8h)</option>
+          <option>Medio día (4h)</option>
+          <option>Semana (7 días)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row form-row-2">
+      <div>
+        <label class="form-label">Personas</label>
+        <select class="form-select">
+          <option>2 personas</option>
+          <option>4 personas</option>
+          <option>6 personas</option>
+          <option>8+ personas</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">Con patrón</label>
+        <select class="form-select">
+          <option>Sí, incluir patrón</option>
+          <option>No, navegación propia</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row form-row-2">
+      <div>
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-input" placeholder="Tu nombre">
+      </div>
+      <div>
+        <label class="form-label">Teléfono</label>
+        <input type="tel" class="form-input" placeholder="+34 600...">
+      </div>
+    </div>
+
+    <button class="form-submit">Consultar disponibilidad →</button>
+
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:16px;text-align:center;letter-spacing:0.05em;">
+      Sin compromiso · Respuesta en menos de 2 horas
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonios">
+  <div class="section-label">Valoraciones</div>
+  <h2 class="section-title reveal">Lo que dicen<br><em>nuestros clientes</em></h2>
+
+  <div class="testimonials-track">
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">"</div>
+      <p class="t-text">Una experiencia absolutamente increíble. El barco estaba impecable y el patrón nos llevó a calas que nunca hubiéramos encontrado solos.</p>
+      <div class="t-author">
+        <div class="t-avatar">M</div>
+        <div>
+          <div class="t-name">María González</div>
+          <div class="t-origin">Barcelona, España</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">"</div>
+      <p class="t-text">Perfect organization from start to finish. The booking was seamless and the boat exceeded all expectations. Will definitely return!</p>
+      <div class="t-author">
+        <div class="t-avatar">J</div>
+        <div>
+          <div class="t-name">James Thompson</div>
+          <div class="t-origin">London, United Kingdom</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">"</div>
+      <p class="t-text">Отличный сервис! Яхта была в превосходном состоянии, капитан очень профессиональный. Рекомендую всем!</p>
+      <div class="t-author">
+        <div class="t-avatar">А</div>
+        <div>
+          <div class="t-name">Александр Иванов</div>
+          <div class="t-origin">Москва, Россия</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="t-stars">★★★★★</div>
+      <div class="t-quote">"</div>
+      <p class="t-text">O melhor dia das nossas férias. A equipa foi super simpática e o barco estava em perfeitas condições. Obrigado!</p>
+      <div class="t-author">
+        <div class="t-avatar">R</div>
+        <div>
+          <div class="t-name">Ricardo Santos</div>
+          <div class="t-origin">Porto, Portugal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contacto">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">⚓ Marina Blava</div>
+      <p class="footer-tagline">Alquiler de embarcaciones premium en la Costa Brava. Experiencias únicas en el Mediterráneo desde 2014.</p>
+      <div class="footer-contact">
+        <a href="#">📍 Puerto de Blanes, Girona</a>
+        <a href="#">📞 +34 972 000 000</a>
+        <a href="#">✉ info@marinablava.com</a>
+        <a href="#">💬 WhatsApp directo</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Flota</div>
+      <ul class="footer-links">
+        <li><a href="#">Poseidon III</a></li>
+        <li><a href="#">Tramontana</a></li>
+        <li><a href="#">Levante</a></li>
+        <li><a href="#">Ver flota completa</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Servicios</div>
+      <ul class="footer-links">
+        <li><a href="#">Alquiler con patrón</a></li>
+        <li><a href="#">Alquiler sin patrón</a></li>
+        <li><a href="#">Grupos y eventos</a></li>
+        <li><a href="#">Tarifas</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Info</div>
+      <ul class="footer-links">
+        <li><a href="#">Política de reservas</a></li>
+        <li><a href="#">Aviso legal</a></li>
+        <li><a href="#">Privacidad</a></li>
+        <li><a href="#">Zona clientes</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Marina Blava · Powered by BoatOS</div>
+    <div class="lang-selector">
+      <button class="lang-btn active">ES</button>
+      <button class="lang-btn">EN</button>
+      <button class="lang-btn">RU</button>
+      <button class="lang-btn">RO</button>
+      <button class="lang-btn">DE</button>
+      <button class="lang-btn">FR</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.15 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 60) {
+      nav.style.background = 'rgba(8,17,31,0.96)';
+      nav.style.backdropFilter = 'blur(12px)';
+    } else {
+      nav.style.background = '';
+      nav.style.backdropFilter = '';
+    }
+  });
+
+  // Lang selector
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
